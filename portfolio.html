@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio — HB Sound · Hugo Bressaud</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black: #090909;
+    --card: #141414;
+    --card-hover: #1c1c1c;
+    --border: rgba(255,255,255,0.07);
+    --white: #f5f5f0;
+    --muted: rgba(245,245,240,0.42);
+    --accent: #ff0000; /* YouTube Red for hover effect */
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 2.5rem;
+    background: rgba(9,9,9,0.88);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.12em;
+  }
+
+  /* HERO */
+  .page-hero {
+    padding: 9rem 2.5rem 4rem;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 100% at 50% 0%, black 40%, transparent 100%);
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.1s forwards;
+    position: relative;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 10vw, 8rem);
+    line-height: 0.92;
+    letter-spacing: 0.03em;
+    position: relative;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.25s forwards;
+  }
+
+  .hero-title em { font-style: normal; color: var(--muted); }
+
+  .hero-desc {
+    margin-top: 1.75rem;
+    font-size: 0.9rem;
+    color: var(--muted);
+    max-width: 420px;
+    line-height: 1.9;
+    position: relative;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.4s forwards;
+  }
+
+  /* GRID */
+  .portfolio-section { padding: 5rem 2.5rem; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); max-width: 60px; }
+
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  /* CARD */
+  .project-card {
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.25s;
+    overflow: hidden;
+  }
+
+  .project-card:hover { background: var(--card-hover); }
+
+  /* VIDEO THUMBNAIL WRAPPER */
+  .video-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #0d0d0d;
+    overflow: hidden;
+  }
+
+  .thumbnail-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+    opacity: 0.8;
+  }
+
+  .project-card:hover .thumbnail-img {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+
+  /* Play Button Overlay */
+  .play-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease, transform 0.3s ease;
+    z-index: 2;
+  }
+  
+  .play-icon::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 8px 0 8px 14px;
+    border-color: transparent transparent transparent #ffffff;
+    margin-left: 4px;
+  }
+
+  .project-card:hover .play-icon {
+    background: var(--accent);
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  /* NOTE ZONE */
+  .card-note {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    font-style: italic;
+  }
+
+  /* LAST ODD CENTERED */
+  .project-card.last-odd {
+    grid-column: 1 / -1;
+    max-width: 50%;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* FOOTER */
+  .page-footer {
+    padding: 2rem 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .page-footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 640px) {
+    nav { padding: 1rem 1.25rem; }
+    .page-hero { padding: 7rem 1.25rem 3rem; }
+    .portfolio-section { padding: 3rem 1.25rem; }
+    .portfolio-grid { grid-template-columns: 1fr; }
+    .project-card.last-odd { grid-column: auto; max-width: 100%; }
+    .page-footer { padding: 1.5rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-title">PortFolio</span>
+</nav>
+
+<header class="page-hero">
+  <div class="hero-grid-bg"></div>
+  <p class="hero-eyebrow">Ingénieur du Son · Lyon</p>
+  <h1 class="hero-title">Hugo<em>BRESSAUD</em></h1>
+  <p class="hero-desc">Mixage, mastering, enregistrement.</p>
+</header>
+
+<section class="portfolio-section">
+  <p class="section-label reveal">Travaux</p>
+  <div class="portfolio-grid">
+
+    <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/album/0Z8jcxnq47E8W6bzGhVC8W?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/071Si5nx0eFjHbuQ1BEROG?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/album/3gYYLorKtTOkgDiRFaZIDc?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/album/7AWNAdsKKP26lenXQ6xbIe?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    
+
+    <!-- 01 -->
+    <a href="https://www.youtube.com/watch?v=hxUfJxPbEnM" target="_blank" class="project-card reveal">
+      <div class="video-wrapper">
+        <div class="play-icon"></div>
+        <img class="thumbnail-img" src="https://img.youtube.com/vi/hxUfJxPbEnM/hqdefault.jpg" alt="Video thumbnail" loading="lazy">
+      </div>
+      <p class="card-note">Ubisoft's Beyond Good And Evil 2 Trailer</p>
+    </a>
+
+    <!-- 02 -->
+    <a href="https://www.youtube.com/watch?v=1dmbyu1exH0" target="_blank" class="project-card reveal">
+      <div class="video-wrapper">
+        <div class="play-icon"></div>
+        <img class="thumbnail-img" src="https://img.youtube.com/vi/1dmbyu1exH0/hqdefault.jpg" alt="Video thumbnail" loading="lazy">
+      </div>
+      <p class="card-note">EA's Apex Legends Trailer</p>
+    </a>
+
+    <!-- 03 -->
+    <a href="https://www.youtube.com/watch?v=tLLYMwb1JKs" target="_blank" class="project-card reveal">
+      <div class="video-wrapper">
+        <div class="play-icon"></div>
+        <img class="thumbnail-img" src="https://img.youtube.com/vi/tLLYMwb1JKs/hqdefault.jpg" alt="Video thumbnail" loading="lazy">
+      </div>
+      <p class="card-note">HOPE 65</p>
+    </a>
+
+    <!-- 04 -->
+    <a href="https://www.youtube.com/watch?v=C8KrY82w7wk" target="_blank" class="project-card reveal">
+      <div class="video-wrapper">
+        <div class="play-icon"></div>
+        <img class="thumbnail-img" src="https://img.youtube.com/vi/C8KrY82w7wk/hqdefault.jpg" alt="Video thumbnail" loading="lazy">
+      </div>
+      <p class="card-note">ID 37 by Reitrac</p>
+    </a>
+
+    <!-- 05 -->
+    <a href="https://www.youtube.com/watch?v=CqXKzxxloDc" target="_blank" class="project-card reveal">
+      <div class="video-wrapper">
+        <div class="play-icon"></div>
+        <img class="thumbnail-img" src="https://img.youtube.com/vi/CqXKzxxloDc/hqdefault.jpg" alt="Video thumbnail" loading="lazy">
+      </div>
+      <p class="card-note">Lunii's Un Fin Gourmet</p>
+    </a>
+
+    <!-- 06 -->
+    <a href="https://www.youtube.com/watch?v=xqLERg1uylQ" target="_blank" class="project-card reveal">
+      <div class="video-wrapper">
+        <div class="play-icon"></div>
+        <img class="thumbnail-img" src="https://img.youtube.com/vi/xqLERg1uylQ/hqdefault.jpg" alt="Video thumbnail" loading="lazy">
+      </div>
+      <p class="card-note">Advertising spot for BoWatts</p>
+    </a>
+
+    <!-- 07 -->
+    <a href="https://www.youtube.com/watch?v=UX2FLUvs_fY" target="_blank" class="project-card reveal">
+      <div class="video-wrapper">
+        <div class="play-icon"></div>
+        <img class="thumbnail-img" src="https://img.youtube.com/vi/UX2FLUvs_fY/hqdefault.jpg" alt="Video thumbnail" loading="lazy">
+      </div>
+      <p class="card-note">Advertising spot for Biocoop</p>
+    </a>
+
+    <!-- 08 -->
+    <a href="https://www.youtube.com/watch?v=wmy-WHpaxC4" target="_blank" class="project-card reveal">
+      <div class="video-wrapper">
+        <div class="play-icon"></div>
+        <img class="thumbnail-img" src="https://img.youtube.com/vi/wmy-WHpaxC4/hqdefault.jpg" alt="Video thumbnail" loading="lazy">
+      </div>
+      <p class="card-note">Advertising spot for BFMTV Lyon</p>
+    </a>
+
+    <!-- 09 -->
+    <a href="https://www.youtube.com/watch?v=8Y7iy3aotr8" target="_blank" class="project-card reveal last-odd">
+      <div class="video-wrapper">
+        <div class="play-icon"></div>
+        <img class="thumbnail-img" src="https://img.youtube.com/vi/8Y7iy3aotr8/hqdefault.jpg" alt="Video thumbnail" loading="lazy">
+      </div>
+      <p class="card-note">Lanfeust de Troy Resounded</p>
+    </a>
+
+  </div>
+</section>
+
+<footer class="page-footer">
+  <p>© 2025 HB Sound · Hugo Bressaud · Lyon</p>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry, i) {
+      if (entry.isIntersecting) {
+        setTimeout(function() { entry.target.classList.add('visible'); }, i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(function(el) { observer.observe(el); });
+</script>
+
+</body>
+</html>
